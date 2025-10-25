@@ -184,7 +184,7 @@ function addQuote() {
     postQuoteToServer(newQuote); // Simulate sending to backend
   }
 }
-async function syncWithServer() {
+async function syncQuotes() {
   try {
     console.log("🔄 Syncing with server...");
 
