@@ -59,6 +59,60 @@ function createAddQuoteForm() {
   formContainer.appendChild(addButton);
   document.body.appendChild(formContainer);
 }
+function exportQuotesToJSON() {
+  // Convert your quotes array to a JSON string
+  const dataStr = JSON.stringify(quotes, null, 2); // (null, 2) makes it pretty-formatted
+
+  // Create a Blob from the string
+  const blob = new Blob([dataStr], { type: "application/json" });
+
+  //A temporary download link
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json"; // filename for download
+  document.body.appendChild(a);
+  a.click();
+
+  // Cleanup
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function importFromJsonFile(event) {
+  const file = event.target.files[0]; // get the selected file
+  if (!file) return; // stop if no file was selected
+
+  const reader = new FileReader(); // create a new file reader
+
+  reader.onload = function(e) {
+    try {
+      // Parse the uploaded file’s contents
+      const importedQuotes = JSON.parse(e.target.result);
+
+      // Validate the structure (optional)
+      if (!Array.isArray(importedQuotes)) {
+        alert("Invalid file format. Expected an array of quotes.");
+        return;
+      }
+
+      // Merge with existing quotes
+      quotes.push(...importedQuotes);
+
+      // Save back to localStorage
+      localStorage.setItem("quotes", JSON.stringify(quotes));
+
+      alert("Quotes imported successfully!");
+    } catch (error) {
+      alert("Error importing file: " + error.message);
+    }
+  };
+
+  reader.readAsText(file); // Read file as text
+}
+
 newQuote.addEventListener('click', showRandomQuote);
 createAddQuoteForm();
+document.getElementById("exportQuotes").addEventListener("click", exportQuotesToJSON);
+document.getElementById("importFile").addEventListener("change", importFromJsonFile);
+
 
