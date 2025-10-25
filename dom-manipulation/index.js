@@ -1,49 +1,54 @@
-// ✅ Load quotes from localStorage or start with default ones
-let quotes = JSON.parse(localStorage.getItem("quotes")) || [
+const quote = document.getElementById('quoteDisplay');
+const btn = document.getElementById('newQuote');
+
+const quotes = [
   { text: "Do what you can, with what you have, where you are.", category: "Motivation" },
   { text: "In the middle of every difficulty lies opportunity.", category: "Inspiration" },
   { text: "Stay hungry, stay foolish.", category: "Success" }
 ];
 
-// ✅ Reference HTML elements
-const quoteDisplay = document.getElementById("quoteDisplay");
-const newQuoteBtn = document.getElementById("newQuote");
-const quoteTextInput = document.getElementById("newQuoteText");
-const quoteCategoryInput = document.getElementById("newQuoteCategory");
-
-// ✅ Function to show a random quote
 function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const randomQuote = quotes[randomIndex];
-
   quoteDisplay.innerHTML = `
     <p>"${randomQuote.text}"</p>
     <small>Category: ${randomQuote.category}</small>
   `;
 }
+function createAddQuoteForm() {
+  const formContainer = document.createElement('div');
 
-// ✅ Function to add a new quote
-function addQuote() {
-  const newText = quoteTextInput.value.trim();
-  const newCategory = quoteCategoryInput.value.trim();
+  const quoteInput = document.createElement('input');
+  quoteInput.placeholder = "Enter quote text";
 
-  if (newText && newCategory) {
+  const categoryInput = document.createElement('input');
+  categoryInput.placeholder = "Enter category";
+
+  const addButton = document.createElement('button');
+  addButton.textContent = "Add Quote";
+
+  addButton.addEventListener('click', () => {
+    const newText = quoteInput.value.trim();
+    const newCategory = categoryInput.value.trim();
+
+    if (newText === '' || newCategory === '') {
+      alert("Please fill in both fields.");
+      return;
+    }
+
     const newQuote = { text: newText, category: newCategory };
     quotes.push(newQuote);
 
-    // ✅ Save updated quotes array to localStorage
-    localStorage.setItem("quotes", JSON.stringify(quotes));
+    alert("Quote added successfully!");
+    quoteInput.value = '';
+    categoryInput.value = '';
+  });
 
-    alert("✅ New quote added successfully!");
-    quoteTextInput.value = "";
-    quoteCategoryInput.value = "";
-  } else {
-    alert("⚠️ Please fill in both fields.");
-  }
+  formContainer.appendChild(quoteInput);
+  formContainer.appendChild(categoryInput);
+  formContainer.appendChild(addButton);
+  document.body.appendChild(formContainer);
 }
-
-// ✅ Event listener for showing a random quote
-newQuoteBtn.addEventListener("click", showRandomQuote);
-
-// ✅ Automatically show one random quote when page loads
-window.onload = showRandomQuote;
+createAddQuoteForm();
+newQuote.addEventListener('click', showRandomQuote);
+// createAddQuoteForm();

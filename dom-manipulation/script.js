@@ -1,11 +1,15 @@
 const quote = document.getElementById('quoteDisplay');
 const btn = document.getElementById('newQuote');
 
-const quotes = [
+let quotes = JSON.parse(localStorage.getItem("quotes")) || [
   { text: "Do what you can, with what you have, where you are.", category: "Motivation" },
   { text: "In the middle of every difficulty lies opportunity.", category: "Inspiration" },
   { text: "Stay hungry, stay foolish.", category: "Success" }
 ];
+
+// localStorage.setItem("quotes", JSON.stringify(quotes));
+// let quotess = JSON.parse(localStorage.getItem("quotes")) || [];
+
 
 function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
@@ -42,7 +46,13 @@ function createAddQuoteForm() {
     alert("Quote added successfully!");
     quoteInput.value = '';
     categoryInput.value = '';
+    localStorage.setItem("quotes", JSON.stringify(quotes));
+
   });
+  quotes.push(newQuote);
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+
+
 
   formContainer.appendChild(quoteInput);
   formContainer.appendChild(categoryInput);
@@ -50,3 +60,5 @@ function createAddQuoteForm() {
   document.body.appendChild(formContainer);
 }
 newQuote.addEventListener('click', showRandomQuote);
+createAddQuoteForm();
+
