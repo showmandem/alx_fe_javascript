@@ -184,9 +184,42 @@ function addQuote() {
     postQuoteToServer(newQuote); // Simulate sending to backend
   }
 }
+async function syncWithServer() {
+  try {
+    console.log("🔄 Syncing with server...");
+
+    // Fetch server data (simulate from mock API)
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const serverData = await response.json();
+
+    // Convert API response to quote format
+    const serverQuotes = serverData.slice(0, 5).map(item => ({
+      id: item.id,
+      text: item.title,
+      category: "Server"
+    }));
+
+    // Load local quotes
+    const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+    // Merge data and handle conflicts
+    const mergedQuotes = resolveConflicts(localQuotes, serverQuotes);
+
+    // Save merged data back to localStorage
+    localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+
+    console.log("Sync complete. Local storage updated.");
+  } catch (error) {
+    console.error("Error syncing with server:", error);
+  }
+}
+
 
 // Fetch new data every 30 seconds
 setInterval(fetchQuotesFromServer, 30000);
+// Run every 30 seconds
+setInterval(syncWithServer, 30000);
+
 
 
 newQuote.addEventListener('click', showRandomQuote);
