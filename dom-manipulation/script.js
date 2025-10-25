@@ -109,6 +109,38 @@ function importFromJsonFile(event) {
 
   reader.readAsText(file); // Read file as text
 }
+function populateCategories() {
+  const categoryFilter = document.getElementById("categoryFilter");
+
+  // Get unique categories
+  const categories = [...new Set(quotes.map(q => q.category))];
+
+  // Add each category to the dropdown
+  categories.forEach(category => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+}
+function filterQuotes() {
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  const quoteDisplay = document.getElementById("quoteDisplay");
+
+  quoteDisplay.innerHTML = ""; // Clear previous quotes
+
+  // Filter based on category
+  const filtered = selectedCategory === "all"
+    ? quotes
+    : quotes.filter(q => q.category === selectedCategory);
+
+  // Display filtered quotes
+  filtered.forEach(q => {
+    const p = document.createElement("p");
+    p.textContent = `"${q.text}" - ${q.category}`;
+    quoteDisplay.appendChild(p);
+  });
+}
 
 newQuote.addEventListener('click', showRandomQuote);
 createAddQuoteForm();
