@@ -141,9 +141,61 @@ function filterQuotes() {
     quoteDisplay.appendChild(p);
   });
 }
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const data = await response.json();
+
+    // Simulate mapping API data to quote structure
+    const serverQuotes = data.slice(0, 5).map(item => ({
+      text: item.title,
+      category: "Server Data"
+    }));
+
+    // Add to your existing quotes array
+    quotes.push(...serverQuotes);
+    saveQuotes(); // Save to localStorage
+    console.log("Fetched quotes from server:", serverQuotes);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(quote)
+    });
+    const result = await response.json();
+    console.log("Quote successfully posted to server:", result);
+  } catch (error) {
+    console.error("Error posting data:", error);
+  }
+}
+function addQuote() {
+  const text = document.getElementById("quoteInput").value;
+  const category = document.getElementById("categoryInput").value;
+
+  if (text && category) {
+    const newQuote = { text, category };
+    quotes.push(newQuote);
+    saveQuotes();
+    postQuoteToServer(newQuote); // Simulate sending to backend
+  }
+}
+
+// Fetch new data every 30 seconds
+setInterval(fetchQuotesFromServer, 30000);
+
 
 newQuote.addEventListener('click', showRandomQuote);
 createAddQuoteForm();
+loadQuotes();           // Load from local storage
+fetchQuotesFromServer(); // Simulate fetching from API
+populateCategories();   // Populate dropdowns dynamically
+filterQuotes();         // Display quotes on screen
+
 document.getElementById("exportQuotes").addEventListener("click", exportQuotesToJSON);
 document.getElementById("importFile").addEventListener("change", importFromJsonFile);
 
